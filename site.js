@@ -26,6 +26,23 @@
       </article>`).join("");
   }
 
+  function reading(list) {
+    if (!list.length) return `<p class="empty">My reading history will build up here, one piece at a time.</p>`;
+    return list.map(r => `
+      <article class="entry">
+        <div class="when">${fmtDate(r.date)}<br><span class="kind reading">${esc(r.type || "Reading")}</span></div>
+        <div>
+          <h3>${r.link ? `<a href="${esc(r.link)}" target="_blank" rel="noopener">${esc(r.title)}</a>` : esc(r.title)}</h3>
+          ${r.topics && r.topics.length ? `<div class="source">${esc(r.topics.join(" · "))}</div>` : ""}
+          ${r.take ? `<p>${esc(r.take)}</p>` : ""}
+        </div>
+      </article>`).join("");
+  }
+  document.querySelectorAll("[data-reading]").forEach(el => {
+    const n = parseInt(el.dataset.reading, 10);
+    const list = [...READING].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    el.innerHTML = reading(n ? list.slice(0, n) : list);
+  });
   document.querySelectorAll("[data-projects]").forEach(el => {
     const past = el.dataset.projects === "past";
     el.innerHTML = cards(PROJECTS.filter(p => !!p.past === past), past);

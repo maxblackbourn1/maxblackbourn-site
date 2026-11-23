@@ -22,14 +22,3 @@ const PROJECTS = [
     text: "A planned six-week remote fellowship to train undergraduates as AI safety communicators through rapid-response short-form content. It didn’t run. A LessWrong post on what happened and what I learned is coming soon, and I’ll link it here." }
     /* add link: "https://..." to any project to show a "Read more" link */
 ];
-
-/* ---------- JOURNAL: daily thoughts & pieces read ----------
-   Newest first. type: "Thought" or "Reading".
-   For readings, add  source: "Author, Publication"  and  link: "https://..."
-
-   Example (copy, fill in, and remove the slashes):
-   // { date: "2026-11-24", type: "Thought", title: "…", text: "…" },
-   // { date: "2026-11-24", type: "Reading", title: "…", source: "…", link: "https://…", text: "My take: …" },
-*/
-const JOURNAL = [
-];
