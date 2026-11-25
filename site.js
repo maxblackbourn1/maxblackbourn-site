@@ -13,15 +13,15 @@
         </div>
       </article>`).join("");
   }
-  function entries(list) {
-    if (!list.length) return `<p class="empty">The first entries are on their way: short daily thoughts and notes on what I’m reading.</p>`;
+  function entries(list, empty) {
+    if (!list.length) return `<p class="empty">${esc(empty || "Nothing here yet.")}</p>`;
     return list.map(e => `
       <article class="entry">
-        <div class="when">${fmtDate(e.date)}<br><span class="kind${e.type === "Reading" ? " reading" : ""}">${esc(e.type || "Thought")}</span></div>
+        <div class="when">${fmtDate(e.date)}<br><span class="kind ${esc((e.type || "capture").toLowerCase())}">${esc(e.type || "Capture")}</span></div>
         <div>
           <h3>${e.link ? `<a href="${esc(e.link)}" target="_blank" rel="noopener">${esc(e.title)}</a>` : esc(e.title)}</h3>
           ${e.source ? `<div class="source">${esc(e.source)}</div>` : ""}
-          ${e.text ? `<p>${esc(e.text)}</p>` : ""}
+          ${e.text ? `<p class="raw">${esc(e.text).replace(/\n/g, "<br>")}</p>` : ""}
         </div>
       </article>`).join("");
   }
@@ -49,8 +49,10 @@
   });
   document.querySelectorAll("[data-journal]").forEach(el => {
     const n = parseInt(el.dataset.journal, 10);
-    const list = [...JOURNAL].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-    el.innerHTML = entries(n ? list.slice(0, n) : list);
+    const kind = el.dataset.kind;
+    const list = [...JOURNAL].filter(e => !kind || (e.type || "Capture") === kind)
+      .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    el.innerHTML = entries(n ? list.slice(0, n) : list, el.dataset.empty);
   });
   document.querySelectorAll("[data-face]").forEach(el => {
     el.innerHTML = FACE(el.dataset.face, { track: el.hasAttribute("data-track") });

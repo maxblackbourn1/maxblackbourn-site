@@ -4,13 +4,15 @@
 Usage: python3 tools/sync_data.py notion.json
 JSON shape:
   {"reading": [{"date","title","link","type","topics":[...],"take"}],
-   "journal": [{"date","title","text","link"?}]}
+   "journal": [{"date","kind":"Take"|"Capture","title","text","link"?}]}
+"text" is Max's own words, published as written (no rewording).
 Only publishable rows should be passed in (see SYNC.md).
 """
 import json, sys, pathlib
 
 d = json.load(open(sys.argv[1]))
 clean = lambda x: " ".join(str(x or "").split())
+keep = lambda x: "\n".join(" ".join(l.split()) for l in str(x or "").strip().splitlines()).strip()
 reading = [{
     "date": clean(r.get("date"))[:10], "title": clean(r.get("title")),
     "link": clean(r.get("link")), "type": clean(r.get("type")) or "Reading",
@@ -18,8 +20,9 @@ reading = [{
     "take": clean(r.get("take")),
 } for r in d.get("reading", []) if clean(r.get("title"))]
 journal = [{
-    "date": clean(j.get("date"))[:10], "type": "Thought",
-    "title": clean(j.get("title")), "text": clean(j.get("text")),
+    "date": clean(j.get("date"))[:10],
+    "type": "Take" if clean(j.get("kind")).lower() == "take" else "Capture",
+    "title": clean(j.get("title")), "text": keep(j.get("text")),
     **({"link": clean(j["link"])} if clean(j.get("link")) else {}),
 } for j in d.get("journal", []) if clean(j.get("title")) or clean(j.get("text"))]
 reading.sort(key=lambda r: r["date"], reverse=True)
